@@ -3,7 +3,12 @@
 # 開發環境
 1. React
 2. node: v22.6.0
-2. npm: 10.8.2
+3. npm: 10.8.2
+
+# Version History
+1.0.0
+提供初次接觸程式通的新手了解如何向 APP 進行雙向溝通
+
 
 # How to Start a new project
 
