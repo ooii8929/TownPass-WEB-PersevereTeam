@@ -1,20 +1,45 @@
 # TownPass-WEB-PersevereTeam
 
-# 開發環境
+### 開發環境
 1. React
 2. node: v22.6.0
 3. npm: 10.8.2
 
-# Version History
+### Version History
 1.0.0
 提供初次接觸程式通的新手了解如何向 APP 進行雙向溝通
 
 
-# How to Start a new project
+### CI/CD
+```mermaid
+gitGraph
+    commit
+    branch develop
+    commit
+    branch feat/wifi
+    commit
+    commit
+    checkout develop
+    merge feat/wifi
+    branch feat/bluetooth
+    commit
+    checkout develop
+    merge feat/bluetooth
+    checkout main
+    merge develop
+    commit id: "主線(到時候 Demo 用)"
+    checkout develop
+    commit id: "開發(集體開發)"
+```
 
-1. 
+
+### How to Start a new project
 ```
 npx create-react-app persevere-web
+```
+
+### How to run a project
+```
 cd persevere-web
 npm start
 ```
