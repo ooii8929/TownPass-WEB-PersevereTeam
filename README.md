@@ -22,5 +22,5 @@ npm start
 
 
 ### 其他相關設定
-1. 新增 tsconfig 方便確認
+1. 新增 tsconfig 方便對齊 typescript file
 2. 新增 port:2024 在 .env，方便 APP 對齊
