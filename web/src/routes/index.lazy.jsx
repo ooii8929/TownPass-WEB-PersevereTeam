@@ -1,8 +1,9 @@
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect } from "react";
-import { useConnectionMessage } from "../hooks/useConnectionMessage";
-import { useHandleConnectionData } from "../hooks/useHandleConnectionData";
-import { useUserStore } from "../stores/user";
+import { useConnectionMessage } from "@/hooks/useConnectionMessage";
+import { useHandleConnectionData } from "@/hooks/useHandleConnectionData";
+import { useUserStore } from "@/stores/user";
+import { Button } from "@/components/ui/button";
 
 export const Route = createLazyFileRoute("/")({
   component: HomePage,
@@ -13,7 +14,7 @@ function HomePage() {
   const sendMessage = useConnectionMessage();
 
   const handleMessage = useCallback(
-    (event: { data: string }) => {
+    (event) => {
       try {
         const parsedData = JSON.parse(event.data);
         if (parsedData.name === "userinfo") {
@@ -42,12 +43,14 @@ function HomePage() {
 
   return (
     <div className="p-4">
-      <Link
-        to="/test"
-        className="my-4 block text-center bg-black text-white py-2 rounded-md"
-      >
-        Go to Test Page
-      </Link>
+      <Button asChild variant="secondary">
+        <Link
+          to="/test"
+          className="mb-4 w-full"
+        >
+          Go to Test Page
+        </Link>
+      </Button>
       <h1 className="mb-2 text-3xl font-bold">My App</h1>
       <h2 className="mb-1 mt-4 text-xl font-medium">Basic Information</h2>
       <p>Username: {user.username}</p>
