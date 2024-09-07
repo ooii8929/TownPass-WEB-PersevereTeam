@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { conversationsQueryOptions } from "@/lib/queries";
 import { SystemMessage, UserMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -21,18 +22,13 @@ function GamePage() {
 
   const { data } = useQuery(conversationsQueryOptions(USER_ID, tid));
 
-  // function handleClick(index: number) {
-  //   window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  // }
-
   const conversations = data?.conversations.slice(0, len) ?? [];
 
   useEffect(() => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     if (!data) return;
     if (data.conversations.length <= len) return;
-    setTimeout(() => {
-      setLen((prev) => prev + 1);
-    }, 150);
+    setTimeout(() => setLen((prev) => prev + 1), 150);
   }, [data?.conversations.length, len]);
 
   return (
@@ -53,13 +49,15 @@ function GamePage() {
             return (
               <OptionSystemBlock
                 key={index}
+                prev={conversations.at(index + 1) as UserMessage | undefined}
                 isLast={isLast}
                 message={message}
-                prev={conversations.at(index + 1) as UserMessage | undefined}
               />
             );
           if (message.category === "system" && message.type === "open")
-            return <OpenSystemBlock key={index} message={message} />;
+            return (
+              <OpenSystemBlock key={index} isLast={isLast} message={message} />
+            );
           if (message.category === "system" && message.type === "next")
             return <NextSystemBlock key={index} message={message} />;
         })}
@@ -70,23 +68,42 @@ function GamePage() {
 }
 
 interface OpenSystemBlockProps {
+  isLast: boolean;
   message: Extract<SystemMessage, { type: "open" }>;
 }
 
 function OpenSystemBlock(props: OpenSystemBlockProps) {
+  const { mutateAsync } = useConversation();
+  const { tid } = Route.useParams();
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key !== "Enter") return;
+    if (event.nativeEvent.isComposing) return;
+    mutateAsync({
+      tid,
+      user_uid: USER_ID,
+      last_uid: props.message.uid,
+      reply: event.currentTarget.value,
+      answer: "",
+    });
+  }
+
   return (
     <>
       <SystemBlock message={props.message.content} />
       <hr className="animate-fade my-4" />
       <SystemBlock message={props.message.question} />
+      {props.isLast && (
+        <Input className="animate-fade w-full" onKeyDown={handleKeyDown} />
+      )}
     </>
   );
 }
 
 interface OptionSystemBlockProps {
+  prev: UserMessage | undefined;
   isLast: boolean;
   message: Extract<SystemMessage, { type: "option" }>;
-  prev?: UserMessage;
 }
 
 function OptionSystemBlock(props: OptionSystemBlockProps) {
@@ -95,10 +112,10 @@ function OptionSystemBlock(props: OptionSystemBlockProps) {
 
   function handleClick(answer: string) {
     mutateAsync({
-      tid: tid,
+      tid,
       user_uid: USER_ID,
       last_uid: props.message.uid,
-      reply: answer,
+      reply: "",
       answer,
     });
   }
@@ -112,9 +129,13 @@ function OptionSystemBlock(props: OptionSystemBlockProps) {
         {props.message.options.map((option, index) => (
           <Button
             key={index}
+            disabled={!props.isLast}
             className={cn(
-              "animate-fade h-auto w-full justify-start py-3 text-left",
+              "animate-fade h-auto w-full justify-start py-3 text-left transition-colors",
               // TODO: What is the correct answer?
+              // has answered, not the correct option
+              props.prev?.answer && "text-neutral-500",
+              // has answered, the answer is correct
               props.prev?.answer === option.label &&
                 "bg-emerald-100 text-emerald-800",
             )}
