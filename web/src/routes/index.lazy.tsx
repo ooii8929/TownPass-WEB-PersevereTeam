@@ -51,17 +51,12 @@ function HomePage() {
 
   return (
     <div className="flex h-screen flex-col p-8">
-      <Button asChild variant="secondary" size="lg">
-        <Link to="/test" className="mb-4 w-full">
-          Go to Test Page
-        </Link>
-      </Button>
       {/* <div className="my-auto">
         <div className="mx-auto size-48 rounded-full bg-neutral-50"></div>
       </div> */}
       <div className="my-auto flex flex-col gap-4">
         {/* <Input placeholder="你的名字" defaultValue={user.realName} /> */}
-        <Input type="number" placeholder="你的年齡" />
+        <Input type="number" pattern="\d*" />
         <Select defaultValue="zh">
           <SelectTrigger>
             <SelectValue />
