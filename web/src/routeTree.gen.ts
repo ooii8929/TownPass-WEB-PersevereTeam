@@ -18,8 +18,8 @@ import { Route as rootRoute } from './routes/__root'
 
 const TestLazyImport = createFileRoute('/test')()
 const MapLazyImport = createFileRoute('/map')()
-const BLazyImport = createFileRoute('/b')()
 const IndexLazyImport = createFileRoute('/')()
+const PlacesPidLazyImport = createFileRoute('/places/$pid')()
 
 // Create/Update Routes
 
@@ -33,15 +33,15 @@ const MapLazyRoute = MapLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/map.lazy').then((d) => d.Route))
 
-const BLazyRoute = BLazyImport.update({
-  path: '/b',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/b.lazy').then((d) => d.Route))
-
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const PlacesPidLazyRoute = PlacesPidLazyImport.update({
+  path: '/places/$pid',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/places.$pid.lazy').then((d) => d.Route))
 
 // Populate the FileRoutesByPath interface
 
@@ -52,13 +52,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/b': {
-      id: '/b'
-      path: '/b'
-      fullPath: '/b'
-      preLoaderRoute: typeof BLazyImport
       parentRoute: typeof rootRoute
     }
     '/map': {
@@ -75,6 +68,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestLazyImport
       parentRoute: typeof rootRoute
     }
+    '/places/$pid': {
+      id: '/places/$pid'
+      path: '/places/$pid'
+      fullPath: '/places/$pid'
+      preLoaderRoute: typeof PlacesPidLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -82,46 +82,46 @@ declare module '@tanstack/react-router' {
 
 interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
-  '/b': typeof BLazyRoute
   '/map': typeof MapLazyRoute
   '/test': typeof TestLazyRoute
+  '/places/$pid': typeof PlacesPidLazyRoute
 }
 
 interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
-  '/b': typeof BLazyRoute
   '/map': typeof MapLazyRoute
   '/test': typeof TestLazyRoute
+  '/places/$pid': typeof PlacesPidLazyRoute
 }
 
 interface FileRoutesById {
   '/': typeof IndexLazyRoute
-  '/b': typeof BLazyRoute
   '/map': typeof MapLazyRoute
   '/test': typeof TestLazyRoute
+  '/places/$pid': typeof PlacesPidLazyRoute
 }
 
 interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/b' | '/map' | '/test'
+  fullPaths: '/' | '/map' | '/test' | '/places/$pid'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/b' | '/map' | '/test'
-  id: '/' | '/b' | '/map' | '/test'
+  to: '/' | '/map' | '/test' | '/places/$pid'
+  id: '/' | '/map' | '/test' | '/places/$pid'
   fileRoutesById: FileRoutesById
 }
 
 interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
-  BLazyRoute: typeof BLazyRoute
   MapLazyRoute: typeof MapLazyRoute
   TestLazyRoute: typeof TestLazyRoute
+  PlacesPidLazyRoute: typeof PlacesPidLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
-  BLazyRoute: BLazyRoute,
   MapLazyRoute: MapLazyRoute,
   TestLazyRoute: TestLazyRoute,
+  PlacesPidLazyRoute: PlacesPidLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -137,22 +137,22 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/b",
         "/map",
-        "/test"
+        "/test",
+        "/places/$pid"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
-    },
-    "/b": {
-      "filePath": "b.lazy.tsx"
     },
     "/map": {
       "filePath": "map.lazy.tsx"
     },
     "/test": {
       "filePath": "test.lazy.jsx"
+    },
+    "/places/$pid": {
+      "filePath": "places.$pid.lazy.tsx"
     }
   }
 }
