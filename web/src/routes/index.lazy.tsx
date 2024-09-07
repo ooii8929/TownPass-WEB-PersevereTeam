@@ -4,6 +4,14 @@ import { useConnectionMessage } from "@/hooks/useConnectionMessage";
 import { useHandleConnectionData } from "@/hooks/useHandleConnectionData";
 import { useUserStore } from "@/stores/user";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createLazyFileRoute("/")({
   component: HomePage,
@@ -14,7 +22,7 @@ function HomePage() {
   const sendMessage = useConnectionMessage();
 
   const handleMessage = useCallback(
-    (event) => {
+    (event: { data: string }) => {
       try {
         const parsedData = JSON.parse(event.data);
         if (parsedData.name === "userinfo") {
@@ -27,7 +35,7 @@ function HomePage() {
         console.error("Error parsing data:", error);
       }
     },
-    [setUser]
+    [setUser],
   );
 
   useHandleConnectionData(handleMessage);
@@ -42,16 +50,34 @@ function HomePage() {
     );
 
   return (
-    <div className="p-4">
-      <Button asChild variant="secondary">
-        <Link
-          to="/test"
-          className="mb-4 w-full"
-        >
+    <div className="flex h-screen flex-col p-8">
+      <Button asChild variant="secondary" size="lg">
+        <Link to="/test" className="mb-4 w-full">
           Go to Test Page
         </Link>
       </Button>
-      <h1 className="mb-2 text-3xl font-bold">My App</h1>
+      {/* <div className="my-auto">
+        <div className="mx-auto size-48 rounded-full bg-neutral-50"></div>
+      </div> */}
+      <div className="my-auto flex flex-col gap-4">
+        <Input placeholder="你的名字" defaultValue={user.realName} />
+        <Input type="number" placeholder="你的年齡" />
+        <Select defaultValue="zh">
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="zh">中文</SelectItem>
+            <SelectItem value="en">English</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <Button asChild variant="secondary" size="lg">
+        <Link to="/map" className="w-full">
+          開始
+        </Link>
+      </Button>
+      {/* <h1 className="mb-2 text-3xl font-bold">My App</h1>
       <h2 className="mb-1 mt-4 text-xl font-medium">Basic Information</h2>
       <p>Username: {user.username}</p>
       <p>Real Name: {user.realName}</p>
@@ -66,7 +92,7 @@ function HomePage() {
       )}
       <h2 className="mb-1 mt-4 text-xl font-medium">Other Details</h2>
       <p>Member Type: {user.memberType}</p>
-      <p>Verify Level: {user.verifyLevel}</p>
+      <p>Verify Level: {user.verifyLevel}</p> */}
     </div>
   );
 }
