@@ -152,7 +152,7 @@ export const routeTree = rootRoute
       "filePath": "map.lazy.tsx"
     },
     "/test": {
-      "filePath": "test.lazy.tsx"
+      "filePath": "test.lazy.jsx"
     }
   }
 }
