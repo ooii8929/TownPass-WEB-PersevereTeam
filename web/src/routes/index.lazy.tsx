@@ -44,10 +44,10 @@ function HomePage() {
     sendMessage("userinfo", null);
   }, [sendMessage]);
 
-  if (!user)
-    return (
-      <div className="my-8 h-full w-full text-center">Please open in app.</div>
-    );
+  // if (!user)
+  //   return (
+  //     <div className="my-8 h-full w-full text-center">Please open in app.</div>
+  //   );
 
   return (
     <div className="flex h-screen flex-col p-8">
@@ -60,7 +60,7 @@ function HomePage() {
         <div className="mx-auto size-48 rounded-full bg-neutral-50"></div>
       </div> */}
       <div className="my-auto flex flex-col gap-4">
-        <Input placeholder="你的名字" defaultValue={user.realName} />
+        {/* <Input placeholder="你的名字" defaultValue={user.realName} /> */}
         <Input type="number" placeholder="你的年齡" />
         <Select defaultValue="zh">
           <SelectTrigger>
