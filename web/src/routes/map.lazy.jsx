@@ -38,13 +38,12 @@ export const Route = createLazyFileRoute("/map")({
   component: StartPage,
 });
 
-
 function StartPage() {
   const router = useRouter();
   const [additionalMarkers, setAdditionalMarkers] = React.useState([]);
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: "AIzaSyCBqVXoUft8t8BJTG119hm7QGM0Fw7yJ9U"
+    googleMapsApiKey: import.meta.env.VITE_API_KEY
   })
 
   const getMarkerLabel = (text) => ({
