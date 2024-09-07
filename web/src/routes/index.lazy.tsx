@@ -1,14 +1,19 @@
-import React, { useCallback, useEffect } from "react";
-import { useConnectionMessage } from "./hooks/useConnectionMessage";
-import { useHandleConnectionData } from "./hooks/useHandleConnectionData";
-import { useUserStore } from "./stores/user";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { useCallback, useEffect } from "react";
+import { useConnectionMessage } from "../hooks/useConnectionMessage";
+import { useHandleConnectionData } from "../hooks/useHandleConnectionData";
+import { useUserStore } from "../stores/user";
 
-function App() {
+export const Route = createLazyFileRoute("/")({
+  component: HomePage,
+});
+
+function HomePage() {
   const { user, setUser } = useUserStore();
   const sendMessage = useConnectionMessage();
 
   const handleMessage = useCallback(
-    (event) => {
+    (event: { data: string }) => {
       try {
         const parsedData = JSON.parse(event.data);
         if (parsedData.name === "userinfo") {
@@ -21,7 +26,7 @@ function App() {
         console.error("Error parsing data:", error);
       }
     },
-    [setUser],
+    [setUser]
   );
 
   useHandleConnectionData(handleMessage);
@@ -37,6 +42,12 @@ function App() {
 
   return (
     <div className="p-4">
+      <Link
+        to="/test"
+        className="my-4 block text-center bg-black text-white py-2 rounded-md"
+      >
+        Go to Test Page
+      </Link>
       <h1 className="mb-2 text-3xl font-bold">My App</h1>
       <h2 className="mb-1 mt-4 text-xl font-medium">Basic Information</h2>
       <p>Username: {user.username}</p>
@@ -56,5 +67,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
