@@ -4,7 +4,8 @@ import { SystemMessage, UserMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 export const Route = createLazyFileRoute("/places/$pid")({
   component: GamePage,
@@ -12,85 +13,53 @@ export const Route = createLazyFileRoute("/places/$pid")({
 
 function GamePage() {
   // const { pid } = Route.useParams();
+  const [len, setLen] = useState(0);
 
   const { data } = useQuery(
     conversationsQueryOptions("498801e1-2f50-4265-8ae1-8216972729d7", 4),
   );
 
-  function handleClick(index: number) {
-    // window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  }
+  // function handleClick(index: number) {
+  //   window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  // }
+
+  const conversations = data?.conversations.slice(0, len) ?? [];
+
+  useEffect(() => {
+    if (!data) return;
+    if (data.conversations.length <= len) return;
+    setTimeout(() => {
+      setLen((prev) => prev + 1);
+    }, 150);
+  }, [data?.conversations.length, len]);
 
   return (
     <div className="flex flex-col p-4 pb-16">
-      <div className="animate-fade mb-4 overflow-clip rounded-lg bg-neutral-800 bg-cover text-center text-lg font-medium text-white [background-image:url('https://img.ltn.com.tw/Upload/house/page/2020/09/18/200918-10395-1-saZAR.jpg')]">
-        <div className="bg-black/60 p-20">迪化街中街</div>
+      <div className="animate-fadeGrow mb-4 overflow-clip rounded-xl bg-neutral-800 bg-cover bg-center text-center text-xl font-medium text-white [background-image:url('https://img.ltn.com.tw/Upload/house/page/2020/09/18/200918-10395-1-saZAR.jpg')]">
+        <div className="bg-black/60">
+          <span className="animate-fadeGrow flex items-center justify-center">
+            迪化街中街
+          </span>
+        </div>
       </div>
-      <div className="animate-fade prose prose-p:my-3 first:prose-p:mt-0 opacity-0 delay-300">
-        {/* <p>
-          迪化街位於臺灣臺北市大同區，初建於清咸豐年間 1850 年代，19
-          世紀末以來一直是臺北重要的南北貨、茶葉、中藥材及布匹的集散中心。為大稻埕地區最重要的市街。19
-          世紀至 20
-          世紀中期，臺北的商業發展約等於大稻埕商圈的發展，而大稻埕的發展約略就等於迪化街的發展。
-        </p>
-        <p>
-          經過 1980 年代的廢存爭議之後，1996
-          年開始，保存原狀的迪化街除了成為臺北市保留最完整的老街外，也於每年農曆春節前夕擴展成規模盛大的「台北年貨大街」。不僅如此，迪化街也同樣維持相同的批發商業功能。據統計，2005
-          年的迪化街附近共有 100 多家的紡織公司、300 多家布行、200
-          多家中藥材鋪，年產值則超過 30 億美金。
-        </p> */}
-        {/* {messages.length === 0 ? (
-          <Button
-            className="animate-fade mx-auto my-2 w-full opacity-0 delay-700"
-            size="lg"
-            onClick={() => handleClick(0)}
-          >
-            出發吧
-          </Button>
-        ) : null} */}
-        {data?.conversations.map((message, index) => {
+      <div className="animate-fade prose prose-p:my-3 first:prose-p:mt-0">
+        {conversations.map((message, index) => {
+          const isLast = index === conversations.length - 1;
           if (message.category === "user" && message.reply)
             return <UserBlock key={index} message={message} />;
           if (message.category === "system" && message.type === "option")
             return (
-              <QuestionBlock
+              <OptionSystemBlock
                 key={index}
-                isLast={index === data.conversations.length - 1}
+                isLast={isLast}
                 message={message}
-                userAnswer={
-                  (data?.conversations.at(index + 1) as UserMessage | undefined)
-                    ?.answer
-                }
+                prev={conversations.at(index + 1) as UserMessage | undefined}
               />
             );
           if (message.category === "system" && message.type === "open")
-            return (
-              <>
-                <p className="animate-fade">{message.content}</p>
-                <hr className="animate-fade my-4" />
-                <p className="animate-fade">{message.question}</p>
-              </>
-            );
+            return <OpenSystemBlock key={index} message={message} />;
           if (message.category === "system" && message.type === "next")
-            return (
-              <>
-                <p className="animate-fade">{message.content}</p>
-                <hr className="animate-fade my-4" />
-                <p className="animate-fade">{message.question}</p>
-                <div className="animate-fade space-y-4">
-                  {message.options.map((option, index) => (
-                    <Button
-                      key={index}
-                      className="animate-fade w-full"
-                      variant="secondary"
-                      // size="lg"
-                    >
-                      {option.task_name}
-                    </Button>
-                  ))}
-                </div>
-              </>
-            );
+            return <NextSystemBlock key={index} message={message} />;
         })}
       </div>
       {/* <pre>{JSON.stringify(data?.conversations, null, 2)}</pre> */}
@@ -98,37 +67,51 @@ function GamePage() {
   );
 }
 
-interface QuestionBlockProps {
-  isLast: boolean;
-  message: Extract<SystemMessage, { type: "option" }>;
-  userAnswer?: string;
+interface OpenSystemBlockProps {
+  message: Extract<SystemMessage, { type: "open" }>;
 }
 
-function QuestionBlock(props: QuestionBlockProps) {
-  function handleClick(choice: string) {}
+function OpenSystemBlock(props: OpenSystemBlockProps) {
+  return (
+    <>
+      <SystemBlock message={props.message.content} />
+      <hr className="animate-fade my-4" />
+      <SystemBlock message={props.message.question} />
+    </>
+  );
+}
+
+interface OptionSystemBlockProps {
+  isLast: boolean;
+  message: Extract<SystemMessage, { type: "option" }>;
+  prev?: UserMessage;
+}
+
+function OptionSystemBlock(props: OptionSystemBlockProps) {
+  // function handleClick(choice: string) {}
 
   return (
     <>
-      <p className="animate-fade">{props.message.content}</p>
+      <SystemBlock message={props.message.content} />
       <hr className="animate-fade my-4" />
-      <p className="animate-fade">{props.message.question}</p>
+      <SystemBlock message={props.message.question} />
       <div className="animate-fade space-y-4">
         {props.message.options.map((option, index) => (
           <Button
             key={index}
             className={cn(
-              "animate-fade w-full justify-start",
+              "animate-fade h-auto w-full justify-start py-3 text-left",
               // TODO: What is the correct answer?
-              props.userAnswer === option.label &&
+              props.prev?.answer === option.label &&
                 "bg-emerald-100 text-emerald-800",
             )}
             variant="secondary"
             // size="lg"
-            onClick={() => handleClick(option.label)}
+            // onClick={() => handleClick(option.label)}
           >
-            {option.option}
-            {props.userAnswer === option.label && (
-              <CheckIcon className="ml-auto h-4 w-4" />
+            <span className="mr-4 whitespace-pre-wrap">{option.option}</span>
+            {props.prev?.answer === option.label && (
+              <CheckIcon className="ml-auto h-4 w-4 shrink-0" />
             )}
           </Button>
         ))}
@@ -137,12 +120,64 @@ function QuestionBlock(props: QuestionBlockProps) {
   );
 }
 
-function UserBlock(props: { message: UserMessage }) {
+interface NextSystemBlockProps {
+  message: Extract<SystemMessage, { type: "next" }>;
+}
+
+function NextSystemBlock(props: NextSystemBlockProps) {
+  return (
+    <>
+      <SystemBlock message={props.message.content} />
+      <hr className="animate-fade my-4" />
+      <SystemBlock message={props.message.question} />
+      <div className="animate-fade space-y-4">
+        {props.message.options.map((option, index) => (
+          <Button
+            key={index}
+            className="animate-fade h-auto w-full justify-start py-3 text-left"
+            variant="secondary"
+            // size="lg"
+          >
+            {option.task_name}
+          </Button>
+        ))}
+        <Button className="animate-fade w-full" variant="link" asChild>
+          <Link to="/map" className="w-full">
+            返回
+          </Link>
+        </Button>
+      </div>
+    </>
+  );
+}
+
+interface UserBlockProps {
+  message: UserMessage;
+}
+
+function UserBlock(props: UserBlockProps) {
   return (
     <div className="my-4 flex">
       <div className="animate-fade ml-auto rounded-3xl rounded-br-md bg-secondary px-4 py-2 pr-3.5">
         {props.message.reply}
       </div>
     </div>
+  );
+}
+
+interface SystemBlockProps {
+  message: string;
+}
+
+function SystemBlock(props: SystemBlockProps) {
+  if (!props.message) return null;
+
+  return (
+    // <p className="animate-fade relative ml-7">
+    <p className="animate-fade relative">
+      {/* <span className="absolute -left-7 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/f8d87a38-2116-457c-aacd-06d78324acd0/d8a4fkf-644b096d-642e-484c-8bbd-5c7c3d86e980.jpg/v1/fit/w_638,h_638,q_70,strp/inside_out_02_disgust_by_miacat7_d8a4fkf-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NjM4IiwicGF0aCI6IlwvZlwvZjhkODdhMzgtMjExNi00NTdjLWFhY2QtMDZkNzgzMjRhY2QwXC9kOGE0ZmtmLTY0NGIwOTZkLTY0MmUtNDg0Yy04YmJkLTVjN2MzZDg2ZTk4MC5qcGciLCJ3aWR0aCI6Ijw9NjM4In1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.7DjaJcth22iJnexivWZaoSFUJbDM0r6znyrvbvV5IjU')]" /> */}
+      {/* <span className="absolute -left-7 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://avatarfiles.alphacoders.com/695/thumb-350-69545.jpg')]" /> */}
+      {props.message}
+    </p>
   );
 }

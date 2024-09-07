@@ -54,11 +54,13 @@ export default {
 
       animation: {
         fade: "fade 500ms ease-in-out forwards",
+        fadeGrow: "fadeGrow 500ms ease-in-out forwards",
       },
       keyframes: {
-        fade: {
-          from: { opacity: 0 },
-          to: { opacity: 1 },
+        fade: { from: { opacity: 0 }, to: { opacity: 1 } },
+        fadeGrow: {
+          from: { opacity: 0, height: "120px" },
+          to: { opacity: 1, height: "200px" },
         },
       },
     },
