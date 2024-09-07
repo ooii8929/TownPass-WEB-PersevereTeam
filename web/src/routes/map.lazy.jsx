@@ -22,11 +22,11 @@ const locations = [
 ];
 
 const additionalLocations = [
-  { name: '永樂布市', position: { lat: 25.0548835, lng: 121.5078849 }, zoom: 17, uid: 'e736ef49-ab33-414b-9bab-f79310398ae8' },
-  { name: '霞海城隍廟', position: { lat: 25.0566811, lng: 121.5079561 }, zoom: 17 , uid: 'a50adb30-1dc7-444d-b5d0-33073a4a3861'},
-  { name: '迪化街中街', position: { lat: 25.055512071, lng: 121.5100328625679 }, zoom: 16, uid: '59e2c6e9-3ebe-4ff0-9c9c-9bb9aca65543' },
-  { name: '寧夏夜市', position: { lat: 25.05686419481904, lng: 121.51586673259719 }, zoom: 17, uid: '0809973a-444f-40c3-8e68-4a76c1b35132' },
-  { name: '大稻埕辜宅', position: { lat: 25.058926801149024, lng: 121.50929451529917 }, zoom: 17, uid: '9c0f4540-0dcb-4be2-9834-b331274c1059' }
+  { name: '永樂布市', position: { lat: 25.05488, lng: 121.50788 }, zoom: 17, uid: 'e736ef49-ab33-414b-9bab-f79310398ae8' },
+  { name: '霞海城隍廟', position: { lat: 25.05668, lng: 121.50795 }, zoom: 17 , uid: 'a50adb30-1dc7-444d-b5d0-33073a4a3861'},
+  { name: '迪化街中街', position: { lat: 25.05551, lng: 121.51003 }, zoom: 16, uid: '59e2c6e9-3ebe-4ff0-9c9c-9bb9aca65543' },
+  { name: '寧夏夜市', position: { lat: 25.05686, lng: 121.51586 }, zoom: 17, uid: '0809973a-444f-40c3-8e68-4a76c1b35132' },
+  { name: '大稻埕辜宅', position: { lat: 25.05892, lng: 121.50929 }, zoom: 17, uid: '9c0f4540-0dcb-4be2-9834-b331274c1059' }
 ];
 
 const mapOptions = {
@@ -150,18 +150,8 @@ function StartPage() {
         ))}
       </GoogleMap>
       <Button
-        style={{
-          position: 'absolute',
-          bottom: '20px',
-          right: '20px',
-          backgroundColor: '#007bff',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '5px',
-          padding: '10px 20px',
-          cursor: 'pointer',
-          zIndex: 1
-        }}
+        size="lg"
+        className="fixed bottom-6 left-1/2 -translate-x-1/2 rounded-xl"
         onClick={handleResetClick}
       >
         回到初始位置
