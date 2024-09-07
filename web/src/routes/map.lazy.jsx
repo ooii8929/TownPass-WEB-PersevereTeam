@@ -82,7 +82,7 @@ function StartPage() {
   };
 
   const handleAddMarkerClick = (location) => {
-    router.navigate({ to: `/places/$pid`, params: { pid: location.uid } });
+    router.navigate({ to: `/tasks/$tid`, params: { tid: location.uid } });
   }
 
   const [map, setMap] = React.useState(null)

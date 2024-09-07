@@ -2,9 +2,13 @@ import { queryOptions } from "@tanstack/react-query";
 import { Conversation } from "@/lib/types";
 import axios from "@/lib/axios";
 
-export function conversationsQueryOptions(uid: string, tid: number) {
+export function conversationsQueryKey(uid: string, tid: string) {
+  return [uid, "conversations", tid];
+}
+
+export function conversationsQueryOptions(uid: string, tid: string) {
   return queryOptions({
-    queryKey: [uid, "conversations", tid],
+    queryKey: conversationsQueryKey(uid, tid),
     queryFn: async () => {
       const { data } = await axios.post<{
         conversations: Conversation[];

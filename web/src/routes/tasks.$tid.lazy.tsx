@@ -2,22 +2,24 @@ import { Button } from "@/components/ui/button";
 import { conversationsQueryOptions } from "@/lib/queries";
 import { SystemMessage, UserMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useConversation } from "@/mutations/conversation";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
-export const Route = createLazyFileRoute("/places/$pid")({
+// TODO
+const USER_ID = "498801e1-2f50-4265-8ae1-8216972729d7";
+
+export const Route = createLazyFileRoute("/tasks/$tid")({
   component: GamePage,
 });
 
 function GamePage() {
-  // const { pid } = Route.useParams();
+  const { tid } = Route.useParams();
   const [len, setLen] = useState(0);
 
-  const { data } = useQuery(
-    conversationsQueryOptions("498801e1-2f50-4265-8ae1-8216972729d7", 4),
-  );
+  const { data } = useQuery(conversationsQueryOptions(USER_ID, tid));
 
   // function handleClick(index: number) {
   //   window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
@@ -88,7 +90,18 @@ interface OptionSystemBlockProps {
 }
 
 function OptionSystemBlock(props: OptionSystemBlockProps) {
-  // function handleClick(choice: string) {}
+  const { tid } = Route.useParams();
+  const { mutateAsync } = useConversation();
+
+  function handleClick(answer: string) {
+    mutateAsync({
+      tid: tid,
+      user_uid: USER_ID,
+      last_uid: props.message.uid,
+      reply: answer,
+      answer,
+    });
+  }
 
   return (
     <>
@@ -107,7 +120,7 @@ function OptionSystemBlock(props: OptionSystemBlockProps) {
             )}
             variant="secondary"
             // size="lg"
-            // onClick={() => handleClick(option.label)}
+            onClick={() => handleClick(option.label)}
           >
             <span className="mr-4 whitespace-pre-wrap">{option.option}</span>
             {props.prev?.answer === option.label && (
