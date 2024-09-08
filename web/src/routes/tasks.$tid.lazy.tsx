@@ -271,11 +271,19 @@ function PendingBlock() {
   );
 }
 
+const avatars: Record<string, string> = {
+  happy: "https://imgur.com/vjvta6M.png",
+  disgust: "https://imgur.com/CFYWzI5.png",
+};
+
 function Avatar() {
+  const style = localStorage.getItem("style") || "happy";
+
   return (
-    // <span className="absolute -left-8 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://imgur.com/CFYWzI5.png')]" />
-    <span className="absolute -left-8 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://imgur.com/vjvta6M.png')]" />
-    // <span className="absolute -left-7 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://avatarfiles.alphacoders.com/695/thumb-350-69545.jpg')]" />
+    <span
+      className="absolute -left-8 top-1 inline-block size-5 rounded-full bg-cover"
+      style={{ backgroundImage: `url('${avatars[style]}')` }}
+    />
   );
 }
 

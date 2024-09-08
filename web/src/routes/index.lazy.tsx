@@ -191,6 +191,7 @@ function HomePage() {
             to="/map"
             className="w-full"
             onClick={() => {
+              localStorage.setItem("style", characters[imageIndex].name);
               mutateAsync({
                 name: user?.realName || "",
                 age: userInfo.age,
