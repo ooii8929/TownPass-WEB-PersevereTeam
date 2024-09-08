@@ -8,9 +8,10 @@ import { CheckIcon } from "@radix-ui/react-icons";
 import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import TTS from "@/components/tts";
 
 // TODO
-const USER_ID = "498801e1-2f50-4265-8ae1-8216972729d7";
+const USER_ID = "ea48f1c4-2d85-4411-913c-feeea5df97aa";
 
 export const Route = createLazyFileRoute("/tasks/$tid")({
   component: GamePage,
@@ -20,6 +21,7 @@ function GamePage() {
   const { tid } = Route.useParams();
   const [len, setLen] = useState(0);
 
+  const { mutateAsync, isPending } = useConversation();
   const { data } = useQuery(conversationsQueryOptions(USER_ID, tid));
 
   const conversations = data?.conversations.slice(0, len) ?? [];
@@ -28,19 +30,31 @@ function GamePage() {
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     if (!data) return;
     if (data.conversations.length <= len) return;
-    setTimeout(() => setLen((prev) => prev + 1), 150);
+    setTimeout(() => setLen(data.conversations.length), 500);
   }, [data?.conversations.length, len]);
+
+  useEffect(() => {
+    if (!data) return;
+    if (data.conversations.length > 0) return;
+    mutateAsync({
+      tid,
+      user_uid: USER_ID,
+      last_uid: "init",
+      reply: "",
+      answer: "",
+    });
+  }, [data]);
 
   return (
     <div className="flex flex-col p-4 pb-16">
-      <div className="animate-fadeGrow mb-4 overflow-clip rounded-xl bg-neutral-800 bg-cover bg-center text-center text-xl font-medium text-white [background-image:url('https://img.ltn.com.tw/Upload/house/page/2020/09/18/200918-10395-1-saZAR.jpg')]">
+      <div className="mb-4 animate-fadeGrow overflow-clip rounded-xl bg-neutral-800 bg-cover bg-center text-center text-xl font-medium text-white [background-image:url('https://img.ltn.com.tw/Upload/house/page/2020/09/18/200918-10395-1-saZAR.jpg')]">
         <div className="bg-black/60">
-          <span className="animate-fadeGrow flex items-center justify-center">
+          <span className="flex animate-fadeGrow items-center justify-center">
             迪化街中街
           </span>
         </div>
       </div>
-      <div className="animate-fade prose prose-p:my-3 first:prose-p:mt-0">
+      <div className="prose animate-fade prose-p:my-3 first:prose-p:mt-0">
         {conversations.map((message, index) => {
           const isLast = index === conversations.length - 1;
           if (message.category === "user" && message.reply)
@@ -61,6 +75,7 @@ function GamePage() {
           if (message.category === "system" && message.type === "next")
             return <NextSystemBlock key={index} message={message} />;
         })}
+        {isPending && <PendingBlock />}
       </div>
       {/* <pre>{JSON.stringify(data?.conversations, null, 2)}</pre> */}
     </div>
@@ -73,7 +88,7 @@ interface OpenSystemBlockProps {
 }
 
 function OpenSystemBlock(props: OpenSystemBlockProps) {
-  const { mutateAsync } = useConversation();
+  const { mutateAsync, isPending } = useConversation();
   const { tid } = Route.useParams();
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -91,11 +106,12 @@ function OpenSystemBlock(props: OpenSystemBlockProps) {
   return (
     <>
       <SystemBlock message={props.message.content} />
-      <hr className="animate-fade my-4" />
+      <hr className="my-4 animate-fade" />
       <SystemBlock message={props.message.question} />
-      {props.isLast && (
-        <Input className="animate-fade w-full" onKeyDown={handleKeyDown} />
+      {props.isLast && !isPending && (
+        <Input onKeyDown={handleKeyDown} className="my-4 w-full animate-fade" />
       )}
+      {isPending && <PendingBlock />}
     </>
   );
 }
@@ -108,7 +124,7 @@ interface OptionSystemBlockProps {
 
 function OptionSystemBlock(props: OptionSystemBlockProps) {
   const { tid } = Route.useParams();
-  const { mutateAsync } = useConversation();
+  const { mutateAsync, isPending } = useConversation();
 
   function handleClick(answer: string) {
     mutateAsync({
@@ -123,15 +139,15 @@ function OptionSystemBlock(props: OptionSystemBlockProps) {
   return (
     <>
       <SystemBlock message={props.message.content} />
-      <hr className="animate-fade my-4" />
+      <hr className="my-4 animate-fade" />
       <SystemBlock message={props.message.question} />
-      <div className="animate-fade space-y-4">
+      <div className="ml-8 animate-fade space-y-4">
         {props.message.options.map((option, index) => (
           <Button
             key={index}
             disabled={!props.isLast}
             className={cn(
-              "animate-fade h-auto w-full justify-start py-3 text-left transition-colors",
+              "h-auto w-full animate-fade justify-start py-3 text-left transition-colors",
               // TODO: What is the correct answer?
               // has answered, not the correct option
               props.prev?.answer && "text-neutral-500",
@@ -150,6 +166,7 @@ function OptionSystemBlock(props: OptionSystemBlockProps) {
           </Button>
         ))}
       </div>
+      {isPending && <PendingBlock />}
     </>
   );
 }
@@ -162,20 +179,20 @@ function NextSystemBlock(props: NextSystemBlockProps) {
   return (
     <>
       <SystemBlock message={props.message.content} />
-      <hr className="animate-fade my-4" />
+      <hr className="my-4 animate-fade" />
       <SystemBlock message={props.message.question} />
-      <div className="animate-fade space-y-4">
+      <div className="ml-8 animate-fade space-y-4">
         {props.message.options.map((option, index) => (
           <Button
             key={index}
-            className="animate-fade h-auto w-full justify-start py-3 text-left"
+            className="h-auto w-full animate-fade justify-start py-3 text-left"
             variant="secondary"
             // size="lg"
           >
             {option.task_name}
           </Button>
         ))}
-        <Button className="animate-fade w-full" variant="link" asChild>
+        <Button className="w-full animate-fade" variant="link" asChild>
           <Link to="/map" className="w-full">
             返回
           </Link>
@@ -191,8 +208,8 @@ interface UserBlockProps {
 
 function UserBlock(props: UserBlockProps) {
   return (
-    <div className="my-4 flex">
-      <div className="animate-fade ml-auto rounded-3xl rounded-br-md bg-secondary px-4 py-2 pr-3.5">
+    <div className="my-4 ml-8 flex">
+      <div className="ml-auto animate-fade rounded-3xl rounded-br-md bg-secondary px-4 py-2 pr-3.5">
         {props.message.reply}
       </div>
     </div>
@@ -207,11 +224,48 @@ function SystemBlock(props: SystemBlockProps) {
   if (!props.message) return null;
 
   return (
-    // <p className="animate-fade relative ml-7">
-    <p className="animate-fade relative">
-      {/* <span className="absolute -left-7 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/f8d87a38-2116-457c-aacd-06d78324acd0/d8a4fkf-644b096d-642e-484c-8bbd-5c7c3d86e980.jpg/v1/fit/w_638,h_638,q_70,strp/inside_out_02_disgust_by_miacat7_d8a4fkf-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NjM4IiwicGF0aCI6IlwvZlwvZjhkODdhMzgtMjExNi00NTdjLWFhY2QtMDZkNzgzMjRhY2QwXC9kOGE0ZmtmLTY0NGIwOTZkLTY0MmUtNDg0Yy04YmJkLTVjN2MzZDg2ZTk4MC5qcGciLCJ3aWR0aCI6Ijw9NjM4In1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.7DjaJcth22iJnexivWZaoSFUJbDM0r6znyrvbvV5IjU')]" /> */}
-      {/* <span className="absolute -left-7 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://avatarfiles.alphacoders.com/695/thumb-350-69545.jpg')]" /> */}
-      {props.message}
-    </p>
+    <div className="relative ml-8 animate-fade whitespace-pre-line">
+      {/* <p className="animate-fade relative"> */}
+      <Avatar />
+      <TTS text={props.message} lang="zh-TW" rate={1.1} />
+      {/* https://cc.tvbs.com.tw/img/program/upload/2023/01/07/20230107160037-8041c9f6.jpg */}
+      {props.message.includes("台灣小吃") && (
+        <div className="mb-4 animate-fadeGrow overflow-clip rounded-xl bg-neutral-800 bg-cover bg-center text-center text-xl font-medium text-white [background-image:url('https://img.ltn.com.tw/Upload/house/page/2020/09/18/200918-10395-1-saZAR.jpg')]">
+          <div className="bg-black/60">
+            <span className="flex animate-fadeGrow items-center justify-center">
+              迪化街中街
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
+
+function PendingBlock() {
+  return (
+    <div className="relative ml-8 animate-fade whitespace-pre-line delay-500">
+      <Avatar />
+      {Array.from({ length: 3 }).map((_, index) => (
+        <p
+          key={index}
+          className={cn(
+            "relative top-1.5 h-4 w-full animate-pulse rounded bg-neutral-200",
+            index === 2 && "w-3/4",
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
+function Avatar() {
+  return (
+    <span className="absolute -left-8 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://imgur.com/CFYWzI5.png')]" />
+    // <span className="absolute -left-7 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://avatarfiles.alphacoders.com/695/thumb-350-69545.jpg')]" />
+  );
+}
+
+// https://toppng.com/uploads/preview/happy-inside-out-disgust-11549856093dh0jxuxlus.png
+
+// https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/f8d87a38-2116-457c-aacd-06d78324acd0/d8a4fkf-644b096d-642e-484c-8bbd-5c7c3d86e980.jpg/v1/fit/w_638,h_638,q_70,strp/inside_out_02_disgust_by_miacat7_d8a4fkf-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NjM4IiwicGF0aCI6IlwvZlwvZjhkODdhMzgtMjExNi00NTdjLWFhY2QtMDZkNzgzMjRhY2QwXC9kOGE0ZmtmLTY0NGIwOTZkLTY0MmUtNDg0Yy04YmJkLTVjN2MzZDg2ZTk4MC5qcGciLCJ3aWR0aCI6Ijw9NjM4In1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.7DjaJcth22iJnexivWZaoSFUJbDM0r6znyrvbvV5IjU

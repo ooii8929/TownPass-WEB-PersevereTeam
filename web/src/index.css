@@ -70,3 +70,18 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.custom-marker-label {
+  /* color: rgb(25, 25, 25); */
+  font-family: Roboto, Arial, sans-serif;
+  font-weight: 500;
+  /* font-size: 14px; */
+  text-stroke: 2px white;
+  -webkit-text-stroke: 2px white;
+  paint-order: stroke fill;
+  text-shadow:
+    1px 1px 0 #fff,
+    -1px 1px 0 #fff,
+    1px -1px 0 #fff,
+    -1px -1px 0 #fff;
+}
