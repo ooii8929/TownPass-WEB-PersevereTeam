@@ -11,12 +11,12 @@ import { useEffect, useState } from "react";
 import TTS from "@/components/tts";
 import { additionalLocations } from "./map.lazy";
 
-// TODO
-const USER_ID = JSON.parse(
-  localStorage.getItem("userData") || "ea48f1c4-2d85-4411-913c-feeea5df97aa",
-);
-// localStorage.getItem("userData") || "ea48f1c4-2d85-4411-913c-feeea5df97aa";
-console.log(USER_ID);
+function getUserId() {
+  return JSON.parse(
+    localStorage.getItem("userData") ||
+      '"ea48f1c4-2d85-4411-913c-feeea5df97aa"',
+  );
+}
 
 export const Route = createLazyFileRoute("/tasks/$tid")({
   component: GamePage,
@@ -27,7 +27,7 @@ function GamePage() {
   const [len, setLen] = useState(0);
 
   const { mutateAsync, isPending } = useConversation();
-  const { data } = useQuery(conversationsQueryOptions(USER_ID, tid));
+  const { data } = useQuery(conversationsQueryOptions(getUserId(), tid));
 
   const conversations = data?.conversations.slice(0, len) ?? [];
   const location = additionalLocations.find((location) => location.uid === tid);
@@ -44,7 +44,7 @@ function GamePage() {
     if (data.conversations.length > 0) return;
     mutateAsync({
       tid,
-      user_uid: USER_ID,
+      user_uid: getUserId(),
       last_uid: "init",
       reply: "",
       answer: "",
@@ -108,7 +108,7 @@ function OpenSystemBlock(props: OpenSystemBlockProps) {
     if (event.nativeEvent.isComposing) return;
     mutateAsync({
       tid,
-      user_uid: USER_ID,
+      user_uid: getUserId(),
       last_uid: props.message.uid,
       reply: event.currentTarget.value,
       answer: "",
@@ -141,7 +141,7 @@ function OptionSystemBlock(props: OptionSystemBlockProps) {
   function handleClick(answer: string) {
     mutateAsync({
       tid,
-      user_uid: USER_ID,
+      user_uid: getUserId(),
       last_uid: props.message.uid,
       reply: "",
       answer,
