@@ -44,7 +44,7 @@ export type Conversations = {
   conversations: Conversation[];
   score: number;
   task_id: string;
-  user_id: string;
+  user_uid: string;
 };
 
 export type ConversationBody = Omit<UserMessage, "category">;
