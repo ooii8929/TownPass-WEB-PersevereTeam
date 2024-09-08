@@ -138,7 +138,7 @@ function StartPage() {
           >
             <button
               className={cn(
-                "custom-marker-label whitespace-nowrap text-base text-blue-700 transition-opacity duration-300",
+                "whitespace-nowrap rounded-lg bg-white/90 px-3 py-2 text-base font-medium transition-opacity duration-300",
                 zoom > 14 ? "opacity-0" : "opacity-100",
               )}
               onClick={() => handleMarkerClick(location)}
@@ -176,10 +176,13 @@ function StartPage() {
       </GoogleMap>
       <Button
         size="lg"
-        className="fixed bottom-6 left-1/2 -translate-x-1/2 rounded-xl"
+        className={cn(
+          "fixed bottom-6 left-1/2 -translate-x-1/2 rounded-xl transition-opacity",
+          zoom === 12 ? "opacity-0" : "opacity-100",
+        )}
         onClick={handleResetClick}
       >
-        回到初始位置 {zoom}
+        回到初始位置
       </Button>
     </div>
   ) : (
