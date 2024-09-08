@@ -48,11 +48,7 @@ const characters = [
 
 function HomePage() {
   const { user, setUser } = useUserStore();
-  const [userInfo, setUserInfo] = useState({
-    name: "",
-    age: 0,
-    lang: "zh",
-  });
+  const [userInfo, setUserInfo] = useState({ age: 12, lang: "tw" });
   const [imageIndex, setImageIndex] = useState(0);
   const sendMessage = useConnectionMessage();
 
@@ -144,6 +140,7 @@ function HomePage() {
         <Input
           type="number"
           pattern="\d*"
+          value={userInfo.age}
           placeholder="年齡"
           onChange={(event) =>
             setUserInfo((prev) => ({
@@ -153,7 +150,7 @@ function HomePage() {
           }
         />
         <Select
-          defaultValue="tw"
+          value={userInfo.lang}
           onValueChange={(value) =>
             setUserInfo((prev) => ({ ...prev, lang: value }))
           }
@@ -176,7 +173,7 @@ function HomePage() {
               name: user?.realName || "",
               age: userInfo.age,
               lang: userInfo.lang,
-              style: characters[imageIndex].chineseName,
+              style: characters[imageIndex].name,
             });
           }}
         >

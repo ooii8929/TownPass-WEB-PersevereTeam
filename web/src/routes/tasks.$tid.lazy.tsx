@@ -9,9 +9,13 @@ import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import TTS from "@/components/tts";
+import { additionalLocations } from "./map.lazy";
 
 // TODO
-const USER_ID = localStorage.getItem("userData") || "ea48f1c4-2d85-4411-913c-feeea5df97aa";
+const USER_ID = JSON.parse(
+  localStorage.getItem("userData") || "ea48f1c4-2d85-4411-913c-feeea5df97aa",
+);
+// localStorage.getItem("userData") || "ea48f1c4-2d85-4411-913c-feeea5df97aa";
 console.log(USER_ID);
 
 export const Route = createLazyFileRoute("/tasks/$tid")({
@@ -26,6 +30,7 @@ function GamePage() {
   const { data } = useQuery(conversationsQueryOptions(USER_ID, tid));
 
   const conversations = data?.conversations.slice(0, len) ?? [];
+  const location = additionalLocations.find((location) => location.uid === tid);
 
   useEffect(() => {
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
@@ -48,10 +53,16 @@ function GamePage() {
 
   return (
     <div className="flex flex-col p-4 pb-16">
-      <div className="mb-4 animate-fadeGrow overflow-clip rounded-xl bg-neutral-800 bg-cover bg-center text-center text-xl font-medium text-white [background-image:url('https://img.ltn.com.tw/Upload/house/page/2020/09/18/200918-10395-1-saZAR.jpg')]">
+      <div
+        className="mb-4 animate-fadeGrow overflow-clip rounded-xl bg-neutral-800 bg-cover bg-center text-center text-xl font-medium text-white"
+        style={{
+          backgroundImage: `url('${location?.image_url}')`,
+        }}
+      >
         <div className="bg-black/60">
           <span className="flex animate-fadeGrow items-center justify-center">
-            迪化街中街
+            {/* 迪化街中街 */}
+            {location?.name}
           </span>
         </div>
       </div>
@@ -230,7 +241,7 @@ function SystemBlock(props: SystemBlockProps) {
       <Avatar />
       <TTS text={props.message} lang="zh-TW" rate={1.1} />
       {/* https://cc.tvbs.com.tw/img/program/upload/2023/01/07/20230107160037-8041c9f6.jpg */}
-      {props.message.includes("台灣小吃") && (
+      {/* {props.message.includes("台灣小吃") && (
         <div className="mb-4 animate-fadeGrow overflow-clip rounded-xl bg-neutral-800 bg-cover bg-center text-center text-xl font-medium text-white [background-image:url('https://img.ltn.com.tw/Upload/house/page/2020/09/18/200918-10395-1-saZAR.jpg')]">
           <div className="bg-black/60">
             <span className="flex animate-fadeGrow items-center justify-center">
@@ -238,7 +249,7 @@ function SystemBlock(props: SystemBlockProps) {
             </span>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
@@ -262,7 +273,8 @@ function PendingBlock() {
 
 function Avatar() {
   return (
-    <span className="absolute -left-8 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://imgur.com/CFYWzI5.png')]" />
+    // <span className="absolute -left-8 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://imgur.com/CFYWzI5.png')]" />
+    <span className="absolute -left-8 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://imgur.com/vjvta6M.png')]" />
     // <span className="absolute -left-7 top-1 inline-block size-5 rounded-full bg-cover [background-image:url('https://avatarfiles.alphacoders.com/695/thumb-350-69545.jpg')]" />
   );
 }
