@@ -239,7 +239,7 @@ function SystemBlock(props: SystemBlockProps) {
     <div className="relative ml-8 animate-fade whitespace-pre-line">
       {/* <p className="animate-fade relative"> */}
       <Avatar />
-      <TTS text={props.message} lang="zh-TW" rate={1.1} />
+      <TTS text={props.message} rate={1.1} />
       {/* https://cc.tvbs.com.tw/img/program/upload/2023/01/07/20230107160037-8041c9f6.jpg */}
       {/* {props.message.includes("台灣小吃") && (
         <div className="mb-4 animate-fadeGrow overflow-clip rounded-xl bg-neutral-800 bg-cover bg-center text-center text-xl font-medium text-white [background-image:url('https://img.ltn.com.tw/Upload/house/page/2020/09/18/200918-10395-1-saZAR.jpg')]">

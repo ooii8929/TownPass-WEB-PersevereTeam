@@ -131,7 +131,7 @@ function HomePage() {
       </div>
 
       {/* Centered Text to show character emotion */}
-      <h1 className="mt-2 text-center text-2xl font-bold">
+      <h1 className="mt-2 text-center text-2xl font-medium">
         {characters[imageIndex].chineseName}
       </h1>
       <div className="my-auto flex flex-col gap-4">
@@ -192,6 +192,7 @@ function HomePage() {
             className="w-full"
             onClick={() => {
               localStorage.setItem("style", characters[imageIndex].name);
+              localStorage.setItem("lang", userInfo.lang);
               mutateAsync({
                 name: user?.realName || "",
                 age: userInfo.age,

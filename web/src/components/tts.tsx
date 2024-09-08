@@ -3,11 +3,17 @@ import { useTts } from "tts-react";
 
 interface TTSProps {
   text: string;
-  lang: string;
   rate?: number;
 }
 
-export default function TTS({ text, lang, rate }: TTSProps) {
+const langs: Record<string, string> = {
+  en: "en-US",
+  tw: "zh-TW",
+};
+
+export default function TTS({ text, rate }: TTSProps) {
+  const lang = localStorage.getItem("lang") || "zh";
+
   const {
     ttsChildren,
     state,
@@ -18,7 +24,7 @@ export default function TTS({ text, lang, rate }: TTSProps) {
     // stop,
     // toggleMute
   } = useTts({
-    lang,
+    lang: langs[lang],
     rate,
     children: text,
     markTextAsSpoken: true,
