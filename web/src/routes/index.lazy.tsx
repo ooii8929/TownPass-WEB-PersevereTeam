@@ -21,7 +21,7 @@ export const Route = createLazyFileRoute("/")({
 const characters = [
   {
     "url": "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/f8d87a38-2116-457c-aacd-06d78324acd0/d8a4fkd-e5da9651-be1b-4d64-adcb-153be80d7663.jpg/v1/fit/w_638,h_638,q_70,strp/inside_out_01_joy_by_miacat7_d8a4fkd-375w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NjM4IiwicGF0aCI6IlwvZlwvZjhkODdhMzgtMjExNi00NTdjLWFhY2QtMDZkNzgzMjRhY2QwXC9kOGE0ZmtkLWU1ZGE5NjUxLWJlMWItNGQ2NC1hZGNiLTE1M2JlODBkNzY2My5qcGciLCJ3aWR0aCI6Ijw9NjM4In1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmltYWdlLm9wZXJhdGlvbnMiXX0.g5PYF0dg1HbJTYVfR8FIYhFiLrUReFe1sW-kzqtXGNM",
-    "name": "Joy",
+    "name": "Happy",
     "chineseName": "樂樂",
   },
   {
@@ -175,7 +175,7 @@ function HomePage() {
               name: user?.realName || '',
               age: userInfo.age,
               lang: userInfo.lang,
-              style: characters[imageIndex].chineseName
+              style: characters[imageIndex].name
             })
           }
         }>
