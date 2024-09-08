@@ -8,6 +8,8 @@ import {
   OverlayView,
 } from "@react-google-maps/api";
 import { cn } from "@/lib/utils";
+import { Task, tasks } from "@/data/tasks";
+import { Location, locations } from "@/data/locations";
 
 type Map = google.maps.Map;
 
@@ -17,60 +19,6 @@ const containerStyle = {
 };
 
 const center = { lat: 25.033671, lng: 121.564427 };
-
-const locations = [
-  { name: "北投溫泉", position: { lat: 25.1377, lng: 121.5065 } },
-  { name: "士林北藝", position: { lat: 25.0911, lng: 121.517 } },
-  { name: "大稻埕", position: { lat: 25.0583, lng: 121.5105 } },
-  { name: "萬華艋舺", position: { lat: 25.0324, lng: 121.4997 } },
-  { name: "城北廊帶", position: { lat: 25.0477, lng: 121.517 } },
-  { name: "城南台大", position: { lat: 25.0173, lng: 121.539 } },
-  { name: "信義松菸", position: { lat: 25.0402, lng: 121.565 } },
-  { name: "南港北流", position: { lat: 25.0554, lng: 121.6177 } },
-];
-
-export const additionalLocations = [
-  {
-    name: "永樂布市",
-    position: { lat: 25.05488, lng: 121.50788 },
-    zoom: 17,
-    uid: "e736ef49-ab33-414b-9bab-f79310398ae8",
-    image_url:
-      "https://slowandtravel.com/wp-content/uploads/2022/08/DSC_8315.jpg",
-  },
-  {
-    name: "霞海城隍廟",
-    position: { lat: 25.05668, lng: 121.50795 },
-    zoom: 17,
-    uid: "a50adb30-1dc7-444d-b5d0-33073a4a3861",
-    image_url:
-      "https://www.taiwan.net.tw/att/1/big_scenic_spots/pic_2595_7.jpg",
-  },
-  {
-    name: "迪化街中街",
-    position: { lat: 25.05551, lng: 121.51003 },
-    zoom: 16,
-    uid: "59e2c6e9-3ebe-4ff0-9c9c-9bb9aca65543",
-    image_url:
-      "https://img.ltn.com.tw/Upload/house/page/2020/09/18/200918-10395-1-saZAR.jpg",
-  },
-  {
-    name: "寧夏夜市",
-    position: { lat: 25.05686, lng: 121.51586 },
-    zoom: 17,
-    uid: "0809973a-444f-40c3-8e68-4a76c1b35132",
-    image_url:
-      "https://cc.tvbs.com.tw/img/program/upload/2018/08/24/20180824160053-05d59d7b.jpg",
-  },
-  {
-    name: "大稻埕辜宅",
-    position: { lat: 25.05892, lng: 121.50929 },
-    zoom: 17,
-    uid: "9c0f4540-0dcb-4be2-9834-b331274c1059",
-    image_url:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/%E5%A4%A7%E7%A8%BB%E5%9F%95%E8%BE%9C%E5%AE%85.jpg/1200px-%E5%A4%A7%E7%A8%BB%E5%9F%95%E8%BE%9C%E5%AE%85.jpg",
-  },
-];
 
 const mapOptions = {
   disableDefaultUI: true,
@@ -101,23 +49,18 @@ function StartPage() {
     fontSize: "14px",
   });
 
-  const handleMarkerClick = (location: {
-    name: string;
-    position: { lat: number; lng: number };
-  }) => {
-    // if (location.name === "大稻埕") setAdditionalMarkers(additionalLocations);
-    // else setAdditionalMarkers([]);
+  const handleMarkerClick = (location: Location | Task) => {
     map?.setCenter(location.position);
     setZoom(15);
   };
 
-  const handleAddMarkerClick = (location: { name: string; uid: string }) => {
-    router.navigate({ to: `/tasks/$tid`, params: { tid: location.uid } });
+  const handleAddMarkerClick = (task: Task) => {
+    router.navigate({ to: `/tasks/$tid`, params: { tid: task.uid } });
   };
 
   const onLoad = useCallback((map: Map) => setMap(map), []);
 
-  const onUnmount = useCallback((map: Map) => setMap(null), []);
+  const onUnmount = useCallback(() => setMap(null), []);
 
   const handleResetClick = () => {
     if (map) {
@@ -170,12 +113,12 @@ function StartPage() {
           </OverlayView>
         ))}
 
-        {additionalLocations.map((loc, index) => (
+        {tasks.map((task, index) => (
           <Marker
             key={index}
-            position={loc.position}
-            label={getMarkerLabel(loc.name)}
-            onClick={() => handleAddMarkerClick(loc)}
+            position={task.position}
+            label={getMarkerLabel(task.name)}
+            onClick={() => handleAddMarkerClick(task)}
             options={{ opacity: zoom > 14 ? 100 : 0 }}
             // className={cn(
             //   "custom-marker-label transition-opacity duration-300",

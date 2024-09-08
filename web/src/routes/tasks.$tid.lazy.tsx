@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import TTS from "@/components/tts";
-import { additionalLocations } from "./map.lazy";
+import { tasks } from "@/data/tasks";
 
 function getUserId() {
   return JSON.parse(
@@ -30,7 +30,7 @@ function GamePage() {
   const { data } = useQuery(conversationsQueryOptions(getUserId(), tid));
 
   const conversations = data?.conversations.slice(0, len) ?? [];
-  const location = additionalLocations.find((location) => location.uid === tid);
+  const location = tasks.find((location) => location.uid === tid);
 
   useEffect(() => {
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });

@@ -90,7 +90,7 @@ function HomePage() {
   //   );
 
   return (
-    <div className="flex h-screen flex-col p-8">
+    <div className="flex h-screen animate-fade flex-col gap-4 p-8">
       {/* <div className="my-auto">
         <div className="mx-auto size-48 rounded-full bg-neutral-50"></div>
       </div> */}
@@ -134,7 +134,6 @@ function HomePage() {
       <h1 className="mt-2 text-center text-2xl font-bold">
         {characters[imageIndex].chineseName}
       </h1>
-
       <div className="my-auto flex flex-col gap-4">
         {/* <Input placeholder="你的名字" defaultValue={user.realName} /> */}
         <Input
@@ -159,27 +158,51 @@ function HomePage() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="tw">中文</SelectItem>
-            <SelectItem value="en">English</SelectItem>
+            <SelectItem value="tw">
+              <span className="flex items-center space-x-2">
+                <img src="https://flagcdn.com/w20/tw.png" alt="tw" />
+                <span>中文</span>
+              </span>
+            </SelectItem>
+            <SelectItem value="en">
+              <span className="flex items-center space-x-2">
+                <img src="https://flagcdn.com/w20/us.png" alt="tw" />
+                <span>English</span>
+              </span>
+            </SelectItem>
+            <SelectItem value="jp">
+              <span className="flex items-center space-x-2">
+                <img src="https://flagcdn.com/w20/jp.png" alt="tw" />
+                <span>日本語</span>
+              </span>
+            </SelectItem>
+            <SelectItem value="tv">
+              <span className="flex items-center space-x-2">
+                <img src="https://flagcdn.com/w20/tv.png" alt="tw" />
+                <span>吐瓦魯語</span>
+              </span>
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
-      <Button asChild variant="secondary" size="lg">
-        <Link
-          to="/map"
-          className="w-full"
-          onClick={() => {
-            mutateAsync({
-              name: user?.realName || "",
-              age: userInfo.age,
-              lang: userInfo.lang,
-              style: characters[imageIndex].name,
-            });
-          }}
-        >
-          開始
-        </Link>
-      </Button>
+      <div>
+        <Button asChild variant="secondary" size="lg">
+          <Link
+            to="/map"
+            className="w-full"
+            onClick={() => {
+              mutateAsync({
+                name: user?.realName || "",
+                age: userInfo.age,
+                lang: userInfo.lang,
+                style: characters[imageIndex].name,
+              });
+            }}
+          >
+            開始
+          </Link>
+        </Button>
+      </div>
       {/* <h1 className="mb-2 text-3xl font-bold">My App</h1>
       <h2 className="mb-1 mt-4 text-xl font-medium">Basic Information</h2>
       <p>Username: {user.username}</p>
