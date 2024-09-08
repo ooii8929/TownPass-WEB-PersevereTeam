@@ -48,3 +48,10 @@ export type Conversations = {
 };
 
 export type ConversationBody = Omit<UserMessage, "category">;
+
+export type User = {
+  name: string;
+  age: number;
+  lang: string;
+  style: string;
+};
