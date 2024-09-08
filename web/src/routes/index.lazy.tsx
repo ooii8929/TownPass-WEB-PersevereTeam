@@ -153,7 +153,7 @@ function HomePage() {
           }
         />
         <Select
-          defaultValue="zh"
+          defaultValue="tw"
           onValueChange={(value) =>
             setUserInfo((prev) => ({ ...prev, lang: value }))
           }
